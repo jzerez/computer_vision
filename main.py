@@ -1,10 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-a
 
-b
-print(a)
 #!/usr/bin/env python3
 
 
