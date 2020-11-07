@@ -15,7 +15,7 @@ def get_essential_matrix(keypoints1, keypoints2, cameraMatrix):
     retval, mask	=	cv.findEssentialMat(	points1, points2, cameraMatrix[, method[, prob[, threshold[, mask]]]]	)
     '''
     # find the essential matrix
-    E = cv2.findEssentialMat(keypoints1, keypoints2, cameraMatrix, method=RANSAC, prob=0.999, threshold=1.0)
+    E = cv2.findEssentialMat(keypoints1, keypoints2, cameraMatrix, method=cv2.RANSAC, prob=0.999, threshold=1.0)
     return E
 # %%
 def get_transformation(keypoints1, keypoints2, E, cameraMatrix):
