@@ -107,7 +107,7 @@ if __name__ == "__main__":
 # %%    
     approx_trajectory("/home/james/catkin_ws/src/comprobo20/computer_vision/data/2011_09_26_drive_0002_sync/2011_09_26/2011_09_26_drive_0002_sync/image_00/data")
 # %%
-    approx_trajectory
+    # approx_trajectory
     # img1c = cv2.imread('test_data/frame0000.jpg')
     # img2c = cv2.imread('test_data/frame0001.jpg')
     # img1 = cv2.cvtColor(img1c, cv2.COLOR_BGR2GRAY)
