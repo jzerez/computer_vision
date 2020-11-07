@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+import trajectory
 
 #!/usr/bin/env python3
 
@@ -34,6 +35,6 @@ img2 = cv2.drawKeypoints(img2, kp2, None, color=(0, 255, 0))
 # calculate the descriptors from the keypoints
 
 
-cv2.imshow('', img2), plt.show()
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# cv2.imshow('', img2), plt.show()
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()

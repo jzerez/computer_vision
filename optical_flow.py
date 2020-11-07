@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
+#%%
 import cv2
 import pdb
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+
 
 def get_keypoints(img, fast=None, threshold=100):
     """
@@ -59,35 +62,90 @@ def get_kps(img1, img2, fast=None, threshold=100):
     initial_kp1 = get_keypoints(img1, fast=fast, threshold=threshold)
     return calc_next_kps(img1, img2, initial_kp1)
 
+#%%
+def approx_trajectory(path):
+    """
+    Iterates through images and approximates trajectory of camera in 3D
+
+    Parameters:
+        path (String): the path of a folder containing the images
+
+    Returns:
+        trajectory (tuple(np.array, np.array)): the trajectory of the camera in an inertial reference frame
+    """
+    filenames = []
+    for (roots, dirs, files) in os.walk(path, topdown=True):
+        filenames.append(files)
+        
+
+    filenames = sorted(filenames[0], key = str.lower)
+    # print(filenames)
+    
+
+    for i in range(len(filenames)-1):
+        imgName1 = filenames[i]
+        imgName2 = filenames[i+1]
+
+        img1 = cv2.imread(f'{path}/{imgName1}')
+        print(f'{path}/{imgName1}')
+        img2 = cv2.imread(f'{path}/{imgName2}')
+
+        # img1 = cv2.cvtColor(img1c, cv2.COLOR_BGR2GRAY)
+        # img2 = cv2.cvtColor(img2c, cv2.COLOR_BGR2GRAY)
+
+        fast = cv2.FastFeatureDetector_create()
+        fast.setThreshold(100)
+
+        kp1 = get_keypoints(img1, fast)
+        valid_kp1, valid_kp2 = calc_next_kps(img1, img2, kp1)
+
+#%%
+
 
 if __name__ == "__main__":
-    img1c = cv2.imread('test_data/frame0000.jpg')
-    img2c = cv2.imread('test_data/frame0001.jpg')
-    img1 = cv2.cvtColor(img1c, cv2.COLOR_BGR2GRAY)
-    img2 = cv2.cvtColor(img2c, cv2.COLOR_BGR2GRAY)
 
-    fast = cv2.FastFeatureDetector_create()
-    fast.setThreshold(100)
+# %%    
+    approx_trajectory("/home/james/catkin_ws/src/comprobo20/computer_vision/data/2011_09_26_drive_0002_sync/2011_09_26/2011_09_26_drive_0002_sync/image_00/data")
+# %%
+    approx_trajectory
+    # img1c = cv2.imread('test_data/frame0000.jpg')
+    # img2c = cv2.imread('test_data/frame0001.jpg')
+    # img1 = cv2.cvtColor(img1c, cv2.COLOR_BGR2GRAY)
+    # img2 = cv2.cvtColor(img2c, cv2.COLOR_BGR2GRAY)
 
-    kp1 = get_keypoints(img1, fast)
-    valid_kp1, valid_kp2 = calc_next_kps(img1, img2, kp1)
+    # fast = cv2.FastFeatureDetector_create()
+    # fast.setThreshold(100)
 
-    color = np.random.randint(0,255,(100,3))
-    mask = np.zeros_like(img1c)
-    stacked_img = cv2.addWeighted(img1c, 0.5, img2c, 0.5, 0)
+    # kp1 = get_keypoints(img1, fast)
+    # valid_kp1, valid_kp2 = calc_next_kps(img1, img2, kp1)
 
-    for i,(new,old) in enumerate(zip(valid_kp1, valid_kp2)):
-        a,b = new.astype('int').ravel()
-        c,d = old.astype('int').ravel()
-        mask = cv2.line(mask, (a,b),(c,d), color[i].tolist(), 2)
-        frame = cv2.circle(stacked_img,(a,b),5,color[i].tolist(),-1)
+    # color = np.random.randint(0,255,(100,3))
+    # mask = np.zeros_like(img1c)
+    # stacked_img = cv2.addWeighted(img1c, 0.5, img2c, 0.5, 0)
 
+    # print(valid_kp1)
+    # for i,(new,old) in enumerate(zip(valid_kp1, valid_kp2)):
+    #     a,b = new.astype('int').ravel()
+    #     c,d = old.astype('int').ravel()
+    #     mask = cv2.line(mask, (a,b),(c,d), color[i].tolist(), 2)
+    #     frame = cv2.circle(stacked_img,(a,b),5,color[i].tolist(),-1)
 
-    img = cv2.add(frame,mask)
-    cv2.imshow('frame',img), plt.show()
+    # E, mask = cv2.findEssentialMat(valid_kp1, valid_kp2, focal = 1.0, pp=(0.,0.), method=cv2.RANSAC, prob=0.999, threshold=1.0)
+    # pts, R, t, mask = cv2.recoverPose(E, valid_kp1, valid_kp2)
+    # print("rotation: ", R, "translation: ", t)
+    
+    # TODO(1): create a loop to go through each photo
+    # TODO(2): determine the scale of each translation. They are returned in unit vectors
+    # TODO(3): integrate up the subsequent rotations and translations to plot a path 
+    # TODO(4): plot the path in 3D 
 
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    
+
+    # img = cv2.add(frame,mask)
+    # cv2.imshow('frame',img), plt.show()
+
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
 
 
