@@ -19,7 +19,7 @@ def get_keypoints(img, fast=None, threshold=100):
     if not fast:
         fast = cv2.FastFeatureDetector_create()
         fast.setThreshold(threshold)
-    kps = fast.detect(img1, None)
+    kps = fast.detect(img, None)
     return kps
 
 def calc_next_kps(img1, img2, kp1s):
@@ -43,7 +43,7 @@ def calc_next_kps(img1, img2, kp1s):
 
     return valid_old_kp, valid_new_kp
 
-def get_kps(img1, img2, fast=None, threshold=100):
+def get_mutual_kps(img1, img2, fast=None, threshold=100):
     """
     Gets the mutual and corresponding keypoints from two frames
 
@@ -69,8 +69,9 @@ if __name__ == "__main__":
     fast = cv2.FastFeatureDetector_create()
     fast.setThreshold(100)
 
-    kp1 = get_keypoints(img1, fast)
-    valid_kp1, valid_kp2 = calc_next_kps(img1, img2, kp1)
+    # kp1 = get_keypoints(img1, fast)
+    # valid_kp1, valid_kp2 = calc_next_kps(img1, img2, kp1)
+    valid_kp1, valid_kp2 = get_mutual_kps(img1, img2, fast)
 
     color = np.random.randint(0,255,(100,3))
     mask = np.zeros_like(img1c)
