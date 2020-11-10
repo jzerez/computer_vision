@@ -11,7 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D
 camera_matrix = np.identity(3)
 img_dir = './data/00/image_0/'
 img_strings = sorted(os.listdir(img_dir))
-n_frames = 200
+n_frames = 500
 # n_frames = len(img_strings)
 calc_pos = np.zeros((n_frames, 3))
 calc_ori = np.zeros((n_frames, 3, 3))
@@ -64,7 +64,6 @@ for t_step, img_string in enumerate(img_strings[:n_frames-1]):
     # Get magnitude for calculated transformation from the odom data
     trans_mat_diff = np.abs(true_transforms[t_step, :, :] - true_transforms[t_step+1, :, :])
     t = get_mag(trans_mat_diff)*t
-    # t = [t[0], t[2], t[1]]
 
     curr_pos = np.reshape(calc_pos[t_step], (3, 1))
     curr_ori = calc_ori[t_step]
