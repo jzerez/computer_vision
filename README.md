@@ -3,7 +3,7 @@
 
 ## Project Intro
 
-There are many ways for a mobile robot to know where it is in space. One could use GPS, wheel encoders, IMUs, or a combination of all or more sensors. One approach is to use visual information to localize the robot. The goal for our project is to implement a visual odometry algorithm in Python to plot the path of a vehicle. We used the the KITTI dataset to obtain undistorted camera data and ground truth paths and OpenCV for the common computer vision functions. We ultimately wanted an implementation of a visual odometry algorithm that would produce relatively accurate results. 
+There are many ways for a mobile robot to know where it is in space. One could use GPS, wheel encoders, IMUs, or a combination of all or more sensors. One approach is to use visual information to localize the robot. The goal for our project is to implement a visual odometry algorithm in Python to plot the path of a vehicle. We used the the KITTI dataset to obtain undistorted camera data and ground truth paths and OpenCV for the common computer vision functions. We ultimately wanted an implementation of a visual odometry algorithm that would produce relatively accurate results.
 
 ### Methodology
 How did you solve the problem (i.e., what methods / algorithms did you use and how do they work)? As above, since not everyone will be familiar with the algorithms you have chosen, you will need to spend some time explaining what you did and how everything works.
@@ -81,7 +81,7 @@ Where <img src="https://latex.codecogs.com/gif.latex?t_{pos}" /> is the current 
 Describe a design decision you had to make when working on your project and what you ultimately did (and why)? These design decisions could be particular choices for how you implemented some part of an algorithm or perhaps a decision regarding which of two external packages to use in your project.
 
 
-One major design decision was using OpenCV to do a lot of the heavy lifting. We wanted to have a functional algorithm in a relatively short timeframe, so instead of building each component of the algorithm, we decied to us an open sourced library. 
+One major design decision was using OpenCV to do a lot of the heavy lifting. We wanted to have a functional algorithm in a relatively short timeframe, so instead of building each component of the algorithm, we decied to us an open sourced library.
 
 Another design decision was picking what keypoint tracker to use. We looked to literature and test result to determine which tracking algorithm is the fastest. According to [this test data](https://computer-vision-talks.com/2011-07-13-comparison-of-the-opencv-feature-detection-algorithms/), we found that the FAST algorithm was able to detect the most quickly out of the other options. A quick detector enables us to track the path of a mobile robot in real time with minimal delay.
 
@@ -92,7 +92,7 @@ We perfomed a parameter sweep to determine what the optimal value for the keypoi
 ### Results
 All in all, we were able to produce the following plot, where the orange line represents the ground truth, and the blue line represents the calculated trajectory of the car based on visual odometry.
 
-![results](./full_course_v1.png)
+![results](./full_course_v2.png)
 
 It certainly tends to drift over time, but because we only have access to one stream of information, we have no way of accounting for drift over time. We can look at a brief snapshot at the beginning of the video where the impacts of drift are minimal.
 
@@ -107,11 +107,11 @@ Dealing with git and version control also was kind of a pain for this project. N
 
 What would you do to improve your project if you had more time?
 
-The main thing we would improve given more time would be the accuracy of the odometry. A visual comparison between our path and the ground truth shows that errors greatly accumulate over the course of the video. This led to a large difference between the ground truth and our computed path. One improvement would be to minimize the lateral movement of the vehicle when performing transformations. This is because we know the camera is mounted on a car and it would be extremely unlikely for it to translate sideways without moving forwards. 
+The main thing we would improve given more time would be the accuracy of the odometry. A visual comparison between our path and the ground truth shows that errors greatly accumulate over the course of the video. This led to a large difference between the ground truth and our computed path. One improvement would be to minimize the lateral movement of the vehicle when performing transformations. This is because we know the camera is mounted on a car and it would be extremely unlikely for it to translate sideways without moving forwards.
 
-Another improvement is to use the IMU and our visual odometry to approximate the path. This can be done using a kalman filter, something we would have looked into. 
+Another improvement is to use the IMU and our visual odometry to approximate the path. This can be done using a kalman filter, something we would have looked into.
 
-Another approach is to research and implement a better performing algotithm entirely. 
+Another approach is to research and implement a better performing algotithm entirely.
 
 ### Key Takeaways
 We found that both asynchronous work time, as well as synchronous pair programming worked well for us. When doing asynchronous work, it helped to create additional branches on git in order avoid merge conflicts and avoid having to push work that was potentially unfinished or buggy and corrupt the otherwise clean main branch.
