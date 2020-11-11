@@ -93,10 +93,14 @@ class VisualOdom:
 
     def plot_results(self):
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(self.calc_pos[:,0], -self.calc_pos[:,2], -self.calc_pos[:,1], 'b')
+        # ax = fig.add_subplot(111, projection='3d')
+        plt.plot(self.calc_pos[:,0], -self.calc_pos[:,2])
         # plot the true trajectory
-        ax.scatter(self.true_transforms[:,0,3], self.true_transforms[:,2,3], self.true_transforms[:,1,3], 'r')
+        plt.plot(self.true_transforms[:,0,3], self.true_transforms[:,2,3])
+        plt.xlabel('x position (m)')
+        plt.ylabel('y position (m)')
+        plt.title('Visual Odometry vs. Ground Truth (all frames)')
+        plt.legend(['Calculated pose', 'Ground Truth'])
         plt.figure()
         plt.plot(self.n_kps)
         plt.show()
@@ -112,29 +116,30 @@ class VisualOdom:
 
 
 if __name__ == "__main__":
-    # vo = VisualOdom(n_frames=200)
-    # vo.run()
-    # print(vo.calc_error())
-    # vo.plot_results()
+    vo = VisualOdom(n_frames=None, fast_threshold=50)
+    vo.run()
+    print(vo.calc_error())
+    vo.plot_results()
 
-    def find_best_params():
-        '''
-        1. Start at first threshold value
-        2. run 500 frames
-        3. compute error
-        4. change param
-        5. repeat
-        '''
-        thresholds = np.linspace(0, 100, 10, dtype=np.int)
-        errors = []
-        for i in thresholds:
-            vo = VisualOdom(n_frames=500, fast_threshold=i)
-            vo.run()
-            error = vo.calc_error()
-            errors.append(error)
-        plt.figure()
-        plt.plot(thresholds, errors)
-        plt.xlabel("")
-        plt.show()
+    # def find_best_params():
+    #     '''
+    #     1. Start at first threshold value
+    #     2. run 500 frames
+    #     3. compute error
+    #     4. change param
+    #     5. repeat
+    #     '''
+    #     thresholds = np.linspace(0, 90, 10, dtype=np.int)
+    #     errors = []
+    #     for i in thresholds:
+    #         vo = VisualOdom(n_frames=None, fast_threshold=i)
+    #         vo.run()
+    #         error = vo.calc_error()
+    #         errors.append(error)
+    #     plt.figure()
+    #     plt.plot(thresholds, errors)
+    #     plt.xlabel("FAST threshold value")
+    #     plt.ylabel("Total Root Mean Square Error")
+    #     plt.show()
 
-    find_best_params()
+    # find_best_params()

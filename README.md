@@ -86,13 +86,17 @@ One major design decision was using OpenCV to do a lot of the heavy lifting. We 
 Another design decision was picking what keypoint tracker to use. We looked to literature and test result to determine which tracking algorithm is the fastest. According to [this test data](https://computer-vision-talks.com/2011-07-13-comparison-of-the-opencv-feature-detection-algorithms/), we found that the FAST algorithm was able to detect the most quickly out of the other options. A quick detector enables us to track the path of a mobile robot in real time with minimal delay.
 
 #### Finding Optimal Keypoint Threshold
-We perfomed a parameter sweep to determine what the optimal value for the keypoint threshold is. However, we only computed the value based on the first 500 frames. As a result, when we went through the entire dataset using this value, we ended up with a very large error. Given the time it takes for the parameter sweep and the algorithm to run, we ended up sticking to a the arbitarty value of 100. At the time of this writeup, we are currently running the whole parameter sweep out of curiosity. From what we can observe, it seems like around a threshold of 40-45 is pretty good. 
+We performed a parameter sweep to determine what the optimal value for the keypoint threshold is. We calculated the total error between the calculated pose and the ground truth based on the distance between corresponding points in each dataset. We then ran the code for a variety of different key-point threshold values. the  From what we can observe, it seems like around a threshold of around 50 seems pretty good. Below is a graph that shows the total calculated error vs. the threshold value. 
 ![results](./errorVsThreshold.png)
 
 ### Results
-All in all, we were able to produce the following plot, where the orange line represents the ground truth, and the blue line represents the calculated trajectory of the car based on visual odometry.
+All in all, we were able to produce the following plot, where the orange line represents the ground truth, and the blue line represents the calculated trajectory of the car based on visual odometry. This was generated with a keypoint threshold of 50.
 
-![results](./full_course_v2.png)
+![results_50](./full_course_v3.png)
+
+This can be compared to pose calculated when the keypoint threshold is set to a different value, in this case 100. As we can see, it is visible a lot worse than when we ran the code with a key-point threshold value of 50 (which we saw was optimal when we did the parameter sweep). 
+
+![results_100](./full_course_v2.png)
 
 It certainly tends to drift over time, but because we only have access to one stream of information, we have no way of accounting for drift over time. We can look at a brief snapshot at the beginning of the video where the impacts of drift are minimal.
 
@@ -111,7 +115,7 @@ The main thing we would improve given more time would be the accuracy of the odo
 
 Another improvement is to use the IMU and our visual odometry to approximate the path. This can be done using a kalman filter, something we would have looked into.
 
-Another approach is to research and implement a better performing algotithm entirely.
+Another approach is to research and implement a better performing algorithm entirely.
 
 ### Key Takeaways
 We found that both asynchronous work time, as well as synchronous pair programming worked well for us. When doing asynchronous work, it helped to create additional branches on git in order avoid merge conflicts and avoid having to push work that was potentially unfinished or buggy and corrupt the otherwise clean main branch.
