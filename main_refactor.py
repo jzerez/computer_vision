@@ -8,7 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 class VisualOdom:
-    def __init__(self, n_frames=200):
+    def __init__(self, n_frames=200, fast_threshold=42):
         self.img_dir = './data/00/image_0/'
         self.img_strings = sorted(os.listdir(self.img_dir))
         if n_frames is None:
@@ -26,8 +26,8 @@ class VisualOdom:
                 self.true_transforms[i, :, :] = np.reshape(elems, (3, 4))
         
         self.fast = cv2.FastFeatureDetector_create()
-        self.fast.setThreshold(100)
-        self.kp_threshold = 150
+        self.fast.setThreshold(fast_threshold)
+        self.kp_threshold = -1
 
         self.calc_pos = np.zeros((self.n_frames, 3))
         self.calc_ori = np.zeros((self.n_frames, 3, 3))
@@ -55,6 +55,7 @@ class VisualOdom:
         if self.kp1 is None or len(self.kp1) < self.kp_threshold:
             # resample both kp1 and kp2
             self.kp1, self.kp2 = optical_flow.get_mutual_kps(img1, img2, self.fast)
+            self.kp_threshold = int(len(self.kp1) * 0.8)
         else:
             # calculate kp2 based on kp1
             self.kp1, self.kp2 = optical_flow.calc_next_kps(img1, img2, self.kp1)
@@ -102,8 +103,8 @@ class VisualOdom:
 
     def calc_error(self):
         comp_traj = self.calc_pos[:, (0,2)] * np.array([1 , -1])
-        ground_truth = self.true_transforms[:, (0,2), -1]
-        error = np.sum(np.sqrt(ground_truth-comp_traj)**2)
+        ground_truth = self.true_transforms[:self.n_frames, (0,2), -1]
+        error = np.sum(np.sqrt((ground_truth-comp_traj)**2))
         return error
 
 
@@ -111,20 +112,29 @@ class VisualOdom:
 
 
 if __name__ == "__main__":
-    vo = VisualOdom(n_frames=200)
-    vo.run()
-    vo.calc_error()
-    # vo.plot_results()cv
+    # vo = VisualOdom(n_frames=200)
+    # vo.run()
+    # print(vo.calc_error())
+    # vo.plot_results()
 
-    # def find_best_params(self, vo):
-    #     '''
-    #     1. Start at first threshold value
-    #     2. run 500 frames
-    #     3. compute error
-    #     4. change param
-    #     5. repeat
-    #     '''
-        
-    #     thresholds = np.linspace(0, 200, 50)
-    #     pass
+    def find_best_params():
+        '''
+        1. Start at first threshold value
+        2. run 500 frames
+        3. compute error
+        4. change param
+        5. repeat
+        '''
+        thresholds = np.linspace(0, 100, 10, dtype=np.int)
+        errors = []
+        for i in thresholds:
+            vo = VisualOdom(n_frames=500, fast_threshold=i)
+            vo.run()
+            error = vo.calc_error()
+            errors.append(error)
+        plt.figure()
+        plt.plot(thresholds, errors)
+        plt.xlabel("")
+        plt.show()
 
+    find_best_params()

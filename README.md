@@ -1,35 +1,7 @@
 # computer_vision
 *James Ho and Jonathan Zerez*
 
-## Project Proposal
-What is the main idea of your project?
-* We aim to develop a visual odometry algorithm that is able to trace the path of a camera in 3D. A stretch goal would be to run this algorithm on the Neato in a 3D world and compare our odometry results to the true trajectory.
-
-What are your learning goals for this project?
-* We are aiming to get familiar with using the various built in features of OpenCV in python. Additionally, we want to learn more about the general techniques and algorithms used for visual odometry.
-
-What algorithms or computer vision areas will you be exploring?
-* We will be following a framework we found [here](http://avisingh599.github.io/vision/monocular-vo/). First, we need to find points of interest in the current frame by detecting corners and other easily distinguishable features. We will probably use SIFT or FAST for this. Then, we need to calculate the transform between the points of interest in one frame and the corresponding points of interest in the next frame. In the framework we've found, this is done by using RANSAC to find a strong candidate for the essential matrix, and using SVD to generate rotation and translation transformations.
-
-What components of the algorithm will you implement yourself, which will you use built-in code for? Why?
-* We will probably start off the project by relying quite heavily on built-in openCV algorithms, and slowly creating our own replacements once we are confident in the overall behavior of the code. Creating components of the SIFT/FAST algorithm (like using kernels to select points of interest) would probably be the easiest and first thing that we'd develop on our own.
-
-What is your MVP?
-* Implement our own visual odometry algorithm in python and test our code using the [KITTI](http://www.cvlibs.net/datasets/kitti/) dataset. Compare to ground truth.
-
-What is a stretch goal?
-* Run the algorithm on the Neato with its simulated camera and compare its results to the ground truth data.
-
-What do you view as the biggest risks to you being successful (where success means achieving your learning goals) on this project?
-* The largest risk is not fully understanding the algorithm before we implement it. Understanding each step will allow us to debug and optimize the algorithm more quickly later on.
-
-What might you need from the teaching team for you to be successful on this project?
-* Help explaining concepts or steps in the algorithm if we cannot figure it out on our own.
-
-
-## Writeup
-What was the goal of your project? Since everyone is doing a different project, you will have to spend some time setting this context.
-
+## Project Intro
 
 There are many ways for a mobile robot to know where it is in space. One could use GPS, wheel encoders, IMUs, or a combination of all or more sensors. One approach is to use visual information to localize the robot. The goal for our project is to implement a visual odometry algorithm in Python to plot the path of a vehicle. We used the the KITTI dataset to obtain undistorted camera data and ground truth paths and OpenCV for the common computer vision functions. We ultimately wanted an implementation of a visual odometry algorithm that would produce relatively accurate results. 
 
@@ -108,6 +80,18 @@ Describe a design decision you had to make when working on your project and what
 One major design decision was using OpenCV to do a lot of the heavy lifting. We wanted to have a functional algorithm in a relatively short timeframe, so instead of building each component of the algorithm, we decied to us an open sourced library. 
 
 Another design decision was picking what keypoint tracker to use. We looked to literature and test result to determine which tracking algorithm is the fastest. According to [this test data](https://computer-vision-talks.com/2011-07-13-comparison-of-the-opencv-feature-detection-algorithms/), we found that the FAST algorithm was able to detect the most quickly out of the other options. A quick detector enables us to track the path of a mobile robot in real time with minimal delay.
+
+### Finding Optimal Keypoint Threshold
+We perfomed a parameter sweep to determine what the optimal value for the keypoint threshold is. However, we only computed the value based on the first 500 frames. As a result, when we went through the entire dataset using this value, we ended up with a very large error. Given the time it takes for the parameter sweep and the algorithm to run, we ended up sticking to a the arbitarty value of 100. At the time of this writeup, we are currently running the whole parameter sweep out of curiosity. 
+
+### Results
+All in all, we were able to produce the following plot, where the orange line represents the ground truth, and the blue line represents the calculated trajectory of the car based on visual odometry.
+
+![results](./full_course_v1.png)
+
+It certainly tends to drift over time, but because we only have access to one stream of information, we have no way of accounting for drift over time. We can look at a brief snapshot at the beginning of the video where the impacts of drift are minimal.
+
+
 
 ### Challenges
 Even though this project leaned very heavily on built-in openCV functions, it was difficult to find the correct way to call and implement certain functions, especially because openCV's documentation isn't always the greatest. There was definitely a good deal of trial and error in order to figure out parameters and odd quirks in the data.

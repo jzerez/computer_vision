@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-
 def get_keypoints(img, fast=None, threshold=100):
     """
     Uses cv2's built in FAST feature detector to find keypoints in an image
@@ -22,10 +21,10 @@ def get_keypoints(img, fast=None, threshold=100):
     if not fast:
         fast = cv2.FastFeatureDetector_create()
         fast.setThreshold(threshold)
-    kps = fast.detect(img, None)
+    kps = np.array([[i.pt] for i in fast.detect(img, None)], dtype=np.float32)
     return kps
 
-def calc_next_kps(img1, img2, kp1s):
+def calc_next_kps(img1, img2, kp1):
     """
     Uses cv2's built in Optical Flow function to find corresponding keypoints between 2 images
     
@@ -37,12 +36,11 @@ def calc_next_kps(img1, img2, kp1s):
         valid_old_kp (np.array): keypoints in the first image with correspondences in the second image
         valid_new_kp (np.array): keypoints in the second image with correspondences in the first image
     """
-
-    kp1_points = np.array([[i.pt] for i in kp1s], dtype=np.float32)
-    kp2_points, st, _ = cv2.calcOpticalFlowPyrLK(img1, img2, kp1_points, None)
+    kp1 = np.reshape(kp1, (len(kp1), 1, 2))
+    kp2, st, _ = cv2.calcOpticalFlowPyrLK(img1, img2, kp1, None)
     
-    valid_new_kp = kp2_points[st == 1]
-    valid_old_kp = kp1_points[st == 1]
+    valid_new_kp = kp2[st == 1]
+    valid_old_kp = kp1[st == 1]
 
     return valid_old_kp, valid_new_kp
 
@@ -61,6 +59,7 @@ def get_mutual_kps(img1, img2, fast=None, threshold=100):
     """
     initial_kp1 = get_keypoints(img1, fast=fast, threshold=threshold)
     return calc_next_kps(img1, img2, initial_kp1)
+
 
 #%%
 def approx_trajectory(path):
