@@ -19,7 +19,7 @@ Reconstructing the path of a camera from a sequence of images requires two main 
 #### Finding key-points
 To find the key-points, we use `cv2`'s implementation of a FAST corner detector. For a given pixel *p*, it looks at the circle *c* of 16 pixels that are a radius of 3 away from *p*. If there is a continuous group of *N* pixels in *c* that are all lighter than *p* plus a threshold value, *t*, or if there is a continuous group of *N* pixels in *c* that are all darker than *p* minus *t*, then *p* is labeled as a corner.
 
-![fast](./assets/FAST.png)
+![fast](./assets/FAST.PNG)
 
 The figure above is from the [official site for the FAST algorithm](http://www.edwardrosten.com/work/fast.html). It illustrates the 16 pixels around *p*, *c*, and illustrates the continuous group of pixels in *c* that are all brighter than *p* plus some threshold value *t*.
 
