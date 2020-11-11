@@ -100,8 +100,31 @@ class VisualOdom:
         plt.plot(self.n_kps)
         plt.show()
 
+    def calc_error(self):
+        comp_traj = self.calc_pos[:, (0,2)] * np.array([1 , -1])
+        ground_truth = self.true_transforms[:, (0,2), -1]
+        error = np.sum(np.sqrt(ground_truth-comp_traj)**2)
+        return error
+
+
+        
+
 
 if __name__ == "__main__":
-    vo = VisualOdom(n_frames=None)
+    vo = VisualOdom(n_frames=200)
     vo.run()
-    vo.plot_results()
+    vo.calc_error()
+    # vo.plot_results()cv
+
+    # def find_best_params(self, vo):
+    #     '''
+    #     1. Start at first threshold value
+    #     2. run 500 frames
+    #     3. compute error
+    #     4. change param
+    #     5. repeat
+    #     '''
+        
+    #     thresholds = np.linspace(0, 200, 50)
+    #     pass
+
