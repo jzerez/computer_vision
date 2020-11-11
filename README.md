@@ -48,6 +48,10 @@ kp2, st, err = cv2.calcOpticalFlowPyrLK(img1, img2, kp1, None)
 ```
 Here, `kp1` refers to the key-points found in the first image, `img1`, and `kp2` refers to the corresponding key-points found in the second image, `img2`. OpenCV automatically determines whether a key-point from the original image contains a corresponding keypoint in the second image.
 
+`cv2.calcOpticalFlowPyrLK()` finds the common keypoints between two frames. In subsequent frames, certain keypoints may lose correspondence as the original keypoints eventually leave the frame. In order to ensure that there are a sufficient number of keypoints, we create a keypoint threshold which is 80% of the original number of keypoints calculated. If we drop below 80%, the program automatically resamples keypoints. Below is a graph that shows the keypoints used during the calculation. You can observe declines followed by sharp peaks. This represents the number of  keypoints dwindling until they are suddently resampled.
+
+![num_kps](./num_kps_v2.png)
+
 #### Calculating the Essential Matrix
 The essential matrix, *E* is defined as a transformation from one set of key-points to another, like so:
 
@@ -81,8 +85,9 @@ One major design decision was using OpenCV to do a lot of the heavy lifting. We 
 
 Another design decision was picking what keypoint tracker to use. We looked to literature and test result to determine which tracking algorithm is the fastest. According to [this test data](https://computer-vision-talks.com/2011-07-13-comparison-of-the-opencv-feature-detection-algorithms/), we found that the FAST algorithm was able to detect the most quickly out of the other options. A quick detector enables us to track the path of a mobile robot in real time with minimal delay.
 
-### Finding Optimal Keypoint Threshold
+#### Finding Optimal Keypoint Threshold
 We perfomed a parameter sweep to determine what the optimal value for the keypoint threshold is. However, we only computed the value based on the first 500 frames. As a result, when we went through the entire dataset using this value, we ended up with a very large error. Given the time it takes for the parameter sweep and the algorithm to run, we ended up sticking to a the arbitarty value of 100. At the time of this writeup, we are currently running the whole parameter sweep out of curiosity. 
+![results](./errorVsThreshold.png)
 
 ### Results
 All in all, we were able to produce the following plot, where the orange line represents the ground truth, and the blue line represents the calculated trajectory of the car based on visual odometry.
@@ -90,6 +95,8 @@ All in all, we were able to produce the following plot, where the orange line re
 ![results](./full_course_v1.png)
 
 It certainly tends to drift over time, but because we only have access to one stream of information, we have no way of accounting for drift over time. We can look at a brief snapshot at the beginning of the video where the impacts of drift are minimal.
+
+![short_results](./500_tsteps.png)
 
 
 
