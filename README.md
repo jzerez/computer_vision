@@ -87,7 +87,7 @@ Another design decision was picking what keypoint tracker to use. We looked to l
 
 #### Finding Optimal Keypoint Threshold
 We performed a parameter sweep to determine what the optimal value for the keypoint threshold is. We calculated the total error between the calculated pose and the ground truth based on the distance between corresponding points in each dataset. We then ran the code for a variety of different key-point threshold values. the  From what we can observe, it seems like around a threshold of around 50 seems pretty good. Below is a graph that shows the total calculated error vs. the threshold value. 
-![results](./errorVsThreshold.png)
+![results](./errorVsThreshold_2.png)
 
 ### Results
 All in all, we were able to produce the following plot, where the orange line represents the ground truth, and the blue line represents the calculated trajectory of the car based on visual odometry. This was generated with a keypoint threshold of 50.
