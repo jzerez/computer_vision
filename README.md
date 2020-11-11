@@ -55,7 +55,7 @@ Here, `kp1` refers to the key-points found in the first image, `img1`, and `kp2`
 #### Calculating the Essential Matrix
 The essential matrix, *E* is defined as a transformation from one set of key-points to another, like so:
 
-<img src="https://latex.codecogs.com/gif.latex?k_1^TEy_2=0" />
+<img src="https://latex.codecogs.com/gif.latex?k_1^TEk_2=0" />
 
 where *k1* corresponds to the set of key-points in the first frame, and *k2* corresponds to the set of key-points in the second frame. Calculating this matrix can be done by sampling five points, as the essential matrix *E* has 5 unknowns. Because we have many more than five key-points, we use RANSAC, or Random Sampling Consensus, to iteratively select sets of random five key-points, compute the corresponding essential matrix, and see how well that essential matrix is able to transform the rest of the key-points from the first frame to the second frame.
 
@@ -71,7 +71,7 @@ The essential matrix can be decomposed into a translation vector of unit length 
 
 Once *R* and *t* are calculated, updating the previous pose to reflect the new transformation that has been calculated is done by the following:
 
-<img src="https://latex.codecogs.com/gif.latex?R_{pos} = RR_{pos}" />.
+<img src="https://latex.codecogs.com/gif.latex?R_{pos}=RR_{pos}" />.
 
 <img src="https://latex.codecogs.com/gif.latex?t_{pos}=t_{pos}+tR_{pos}" />
 
@@ -86,7 +86,7 @@ One major design decision was using OpenCV to do a lot of the heavy lifting. We 
 Another design decision was picking what keypoint tracker to use. We looked to literature and test result to determine which tracking algorithm is the fastest. According to [this test data](https://computer-vision-talks.com/2011-07-13-comparison-of-the-opencv-feature-detection-algorithms/), we found that the FAST algorithm was able to detect the most quickly out of the other options. A quick detector enables us to track the path of a mobile robot in real time with minimal delay.
 
 #### Finding Optimal Keypoint Threshold
-We perfomed a parameter sweep to determine what the optimal value for the keypoint threshold is. However, we only computed the value based on the first 500 frames. As a result, when we went through the entire dataset using this value, we ended up with a very large error. Given the time it takes for the parameter sweep and the algorithm to run, we ended up sticking to a the arbitarty value of 100. At the time of this writeup, we are currently running the whole parameter sweep out of curiosity. 
+We perfomed a parameter sweep to determine what the optimal value for the keypoint threshold is. However, we only computed the value based on the first 500 frames. As a result, when we went through the entire dataset using this value, we ended up with a very large error. Given the time it takes for the parameter sweep and the algorithm to run, we ended up sticking to a the arbitarty value of 100. At the time of this writeup, we are currently running the whole parameter sweep out of curiosity. From what we can observe, it seems like around a threshold of 40-45 is pretty good. 
 ![results](./errorVsThreshold.png)
 
 ### Results
