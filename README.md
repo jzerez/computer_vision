@@ -29,7 +29,9 @@ What might you need from the teaching team for you to be successful on this proj
 
 ## Writeup
 What was the goal of your project? Since everyone is doing a different project, you will have to spend some time setting this context.
-(james)
+
+
+There are many ways for a mobile robot to know where it is in space. One could use GPS, wheel encoders, IMUs, or a combination of all or more sensors. One approach is to use visual information to localize the robot. The goal for our project is to implement a visual odometry algorithm in Python to plot the path of a vehicle. We used the the KITTI dataset to obtain undistorted camera data and ground truth paths and OpenCV for the common computer vision functions. We ultimately wanted an implementation of a visual odometry algorithm that would produce relatively accurate results. 
 
 ### Methodology
 How did you solve the problem (i.e., what methods / algorithms did you use and how do they work)? As above, since not everyone will be familiar with the algorithms you have chosen, you will need to spend some time explaining what you did and how everything works.
@@ -101,7 +103,11 @@ Where <img src="https://latex.codecogs.com/gif.latex?t_{pos}" /> is the current 
 
 
 Describe a design decision you had to make when working on your project and what you ultimately did (and why)? These design decisions could be particular choices for how you implemented some part of an algorithm or perhaps a decision regarding which of two external packages to use in your project.
-(james)
+
+
+One major design decision was using OpenCV to do a lot of the heavy lifting. We wanted to have a functional algorithm in a relatively short timeframe, so instead of building each component of the algorithm, we decied to us an open sourced library. 
+
+Another design decision was picking what keypoint tracker to use. We looked to literature and test result to determine which tracking algorithm is the fastest. According to [this test data](https://computer-vision-talks.com/2011-07-13-comparison-of-the-opencv-feature-detection-algorithms/), we found that the FAST algorithm was able to detect the most quickly out of the other options. A quick detector enables us to track the path of a mobile robot in real time with minimal delay.
 
 ### Challenges
 Even though this project leaned very heavily on built-in openCV functions, it was difficult to find the correct way to call and implement certain functions, especially because openCV's documentation isn't always the greatest. There was definitely a good deal of trial and error in order to figure out parameters and odd quirks in the data.
@@ -109,7 +115,12 @@ Even though this project leaned very heavily on built-in openCV functions, it wa
 Dealing with git and version control also was kind of a pain for this project. Neither of us are git-wizards in any sense, and so there were definitely some rather jank solutions to git problems (like `git reset --hard`, or just recloning the entire repo). We made a bunch of branches, but we probably wouldn't have needed to if we were good at git, but the extra branches were certainly helpful.  
 
 What would you do to improve your project if you had more time?
-(james)
+
+The main thing we would improve given more time would be the accuracy of the odometry. A visual comparison between our path and the ground truth shows that errors greatly accumulate over the course of the video. This led to a large difference between the ground truth and our computed path. One improvement would be to minimize the lateral movement of the vehicle when performing transformations. This is because we know the camera is mounted on a car and it would be extremely unlikely for it to translate sideways without moving forwards. 
+
+Another improvement is to use the IMU and our visual odometry to approximate the path. This can be done using a kalman filter, something we would have looked into. 
+
+Another approach is to research and implement a better performing algotithm entirely. 
 
 ### Key Takeaways
 We found that both asynchronous work time, as well as synchronous pair programming worked well for us. When doing asynchronous work, it helped to create additional branches on git in order avoid merge conflicts and avoid having to push work that was potentially unfinished or buggy and corrupt the otherwise clean main branch.
